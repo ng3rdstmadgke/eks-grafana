@@ -1,0 +1,19 @@
+# Configure a Grafana Docker image | Grafana: https://grafana.com/docs/grafana/latest/setup-grafana/configure-docker/
+# Run Grafana Docker image | Grafana: https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
+services:
+  grafana:
+    image: grafana-work/grafana
+    build:
+      context: .
+      dockerfile: docker/grafana/Dockerfile
+    container_name: grafana-work
+    restart: unless-stopped
+    environment:
+      - "GF_SECURITY_ADMIN_USER=admin"
+      - "GF_SECURITY_ADMIN_PASSWORD=tapioka!"
+    ports:
+      - '3001:3001'
+    volumes:
+      - 'grafana_storage:/var/lib/grafana'
+volumes:
+  grafana_storage: {}
