@@ -11,6 +11,7 @@ services:
     environment:
       - "GF_SECURITY_ADMIN_USER=admin"
       - "GF_SECURITY_ADMIN_PASSWORD=tapioka!"
+      - "DB_TYPE=${GRAFANA_DB_TYPE}"  # mysql, postgres, sqlite3
       - "DB_HOST=${LOCAL_MYSQL_HOST}"
       - "DB_NAME=${LOCAL_MYSQL_DATABASE}"
       - "DB_USER=${LOCAL_MYSQL_USER}"
