@@ -8,30 +8,29 @@ cat >&2 <<EOS
 [options]
  -h | --help:
    ヘルプを表示
- --push <STAGE>:
-   同時に指定したステージにプッシュを行う
-   <STAGE>: pushするステージ名を指定(stg, prd, など)
+ --push:
+   ECRにプッシュを行う
  --no-cache:
    キャッシュを使わないでビルド
 
 [example]
- ビルドのみを実行する場合
+ ビルドのみを実行する
  $0
 
- 本番環境のイメージをpushする場合
- $0 --push prd --no-cache
+ ビルドとECRへのプッシュを実行する
+ $0 --push --no-cache
 EOS
 exit 1
 }
 
 AWS_REGION="ap-northeast-1"
-PUSH_STAGE=
+PUSH=
 BUILD_OPTIONS="--rm"
 args=()
 while [ "$#" != 0 ]; do
   case $1 in
     -h | --help  ) usage ;;
-    --push       ) shift; PUSH_STAGE=1 ;;
+    --push       ) shift; PUSH=1 ;;
     --no-cache   ) BUILD_OPTIONS="$BUILD_OPTIONS --no-cache" ;;
     -* | --*     ) error "$1 : 不正なオプションです" ;;
     *            ) args+=("$1") ;;
@@ -62,7 +61,7 @@ docker build $BUILD_OPTIONS \
   .
 
 # ビルドのみの場合はここで終了
-[ -z "$PUSH_STAGE" ] && exit 0
+[ -z "$PUSH" ] && exit 0
 
 #############################
 # イメージのpush
