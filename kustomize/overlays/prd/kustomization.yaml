@@ -14,6 +14,11 @@ images:
   newName: 674582907715.dkr.ecr.ap-northeast-1.amazonaws.com/eks-grafana/grafana
   newTag: latest
 
+# patches: https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/
+#   - Patch using Path Strategic Merge: https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/patches/#patch-using-path-strategic-merge
+patches:
+- path: configmap.patch.yaml
+
 # baseのkustomization.yamlが存在するディレクトリの相対パスを指定
 resources:
 - ../../base

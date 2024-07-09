@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-configmap
+data:
+  GF_SECURITY_ADMIN_USER: "admin"
+  GF_SECURITY_ADMIN_PASSWORD: "tapioka!"
+  DB_TYPE: "sqlite3"
+  DB_HOST: ""
+  DB_NAME: ""
+  DB_USER: ""
+  DB_PASSWORD: ""
