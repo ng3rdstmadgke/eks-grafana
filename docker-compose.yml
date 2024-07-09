@@ -11,6 +11,10 @@ services:
     environment:
       - "GF_SECURITY_ADMIN_USER=admin"
       - "GF_SECURITY_ADMIN_PASSWORD=tapioka!"
+      - "DB_HOST=${LOCAL_MYSQL_HOST}"
+      - "DB_NAME=${LOCAL_MYSQL_DATABASE}"
+      - "DB_USER=${LOCAL_MYSQL_USER}"
+      - "DB_PASSWORD=${LOCAL_MYSQL_PASSWORD}"
     ports:
       - '3001:3001'
     volumes:

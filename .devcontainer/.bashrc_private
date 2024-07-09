@@ -13,5 +13,11 @@ fi
 
 source /etc/bash_completion.d/helm
 
-
 export PATH="$PATH:/home/vscode/.pypoetry/bin"
+
+
+export LOCAL_MYSQL_HOST=eks-grafana-mysql
+export LOCAL_MYSQL_USER=admin
+export LOCAL_MYSQL_PASSWORD=admin1234
+export LOCAL_MYSQL_DATABASE=grafana
+export LOCAL_MYSQL_ROOT_PASSWORD=root1234
