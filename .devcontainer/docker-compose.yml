@@ -1,0 +1,17 @@
+services:
+  main:
+    hostname: main.eks-grafana.local
+    build:
+      context: ../
+      dockerfile: docker/devcontainer/Dockerfile
+    volumes:  # docker-compose.yml があるディレクトリからの相対パスで指定する
+      - ..:/eks-grafana:cached
+      - ~/.aws:/home/vscode/.aws:cached
+      - ~/.ssh:/home/vscode/.ssh:cached
+    command: sleep infinity
+    networks:
+      br-eks-grafana: {}
+networks:
+  br-eks-grafana:
+    driver: bridge
+    name: br-eks-grafana

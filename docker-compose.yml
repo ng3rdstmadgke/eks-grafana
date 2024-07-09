@@ -2,11 +2,11 @@
 # Run Grafana Docker image | Grafana: https://grafana.com/docs/grafana/latest/setup-grafana/installation/docker/
 services:
   grafana:
-    image: grafana-work/grafana
+    image: eks-grafana/grafana
     build:
       context: .
       dockerfile: docker/grafana/Dockerfile
-    container_name: grafana-work
+    container_name: eks-grafana-grafana
     restart: unless-stopped
     environment:
       - "GF_SECURITY_ADMIN_USER=admin"
@@ -15,5 +15,11 @@ services:
       - '3001:3001'
     volumes:
       - 'grafana_storage:/var/lib/grafana'
+    networks:
+      br-eks-grafana: {}
 volumes:
   grafana_storage: {}
+networks:
+  br-eks-grafana:
+    driver: bridge
+    name: br-eks-grafana
