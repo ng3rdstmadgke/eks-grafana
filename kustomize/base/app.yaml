@@ -1,0 +1,101 @@
+# Deploy Grafana on Kubernetes: https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/
+---
+# ネームスペース
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: grafana-dev
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+spec:
+  selector:
+    matchLabels:
+      app: grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+    spec:
+      securityContext:
+        fsGroup: 472
+        supplementalGroups:
+          - 0
+      containers:
+        - name: grafana
+          image: eks-grafana/grafana
+          env:
+          - name: DB_TYPE
+            value: sqlite3
+          - name: GF_SECURITY_ADMIN_USER
+            value: admin
+          - name: GF_SECURITY_ADMIN_PASSWORD
+            value: tapioka!
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3001
+              name: http-grafana
+              protocol: TCP
+          # Container probes: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+          readinessProbe:  # コンテナがリクエスト応答する準備ができているかを確認。準備ができていない場合はServiceからそのPodのIPアドレスが削除され
+            failureThreshold: 3
+            httpGet:  # PodのIPアドレスに対して、指定されたポートとパスでHTTP GETのリクエストを送信
+              path: /robots.txt
+              port: 3001
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          # Container probes: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+          livenessProbe:  # コンテナが正常に動いているかの確認。動いていない場合はPodを再起動する
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:  # PodのIPアドレスに対して、指定されたポートでTCPチェックを行
+              port: 3001
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 250m
+              memory: 750Mi
+          volumeMounts:
+            - mountPath: /var/lib/grafana
+              name: grafana-pv
+      volumes:
+        - name: grafana-pv
+          persistentVolumeClaim:
+            claimName: grafana-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana  # コンテナ間通信のためのホスト名となる
+# ServiceSpec: https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/#ServiceSpec
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: http-grafana
+  type: ClusterIP
+  selector:
+    # このセレクタにマッチするラベルキーと値を持つポッドにサービストラフィックをルーティングします。
+    app: grafana
