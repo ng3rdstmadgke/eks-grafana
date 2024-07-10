@@ -4,7 +4,7 @@ services:
   grafana:
     image: eks-grafana/grafana
     build:
-      context: .
+      context: ../
       dockerfile: docker/grafana/Dockerfile
     container_name: eks-grafana-grafana
     restart: unless-stopped

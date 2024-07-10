@@ -16,6 +16,7 @@ docker run -d --rm \
   --network br-eks-grafana \
   eks-grafana/mysql:latest
 
+docker rm -f eks-grafana-mysql-check
 docker run --rm \
   --name eks-grafana-mysql-check \
   -e "MYSQL_HOST=$LOCAL_MYSQL_HOST" \
